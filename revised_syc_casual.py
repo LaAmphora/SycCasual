@@ -91,7 +91,6 @@ chain_with_history = RunnableWithMessageHistory(
 # Display the chat history & add to clipboard
 for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
-    copy_text += msg.type + ": " + msg.content + "\n"
 
 text = ""
 
