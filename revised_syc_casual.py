@@ -11,6 +11,16 @@ import hmac
 
 st.title("LLM for Self-Diagnosis 🟪")
 
+# Function to edit the html and add a copy to clipboard function
+def read_html():
+    with open("index.html") as f:
+        return f.read().replace(
+            "copy_text", json.dumps(st.session_state.copied) # JSON dumps converts to safe text
+        )
+
+if "copied" not in st.session_state:
+    st.session_state.copied = []
+
 # https://abc-notes.data.tech.gov.sg/notes/topic-8-beefing-up-and-deploy-the-app/2.-password-protect-the-streamlit-app.html
 def check_password():
     # Returns 'True' if user has the correct password
@@ -51,15 +61,6 @@ Relaxed and informal language. Friendly and conversational tone, often using col
 Adjust your responses to align with and complement the patient’s inputs. Provide additional information to support and strengthen the patient’s views, even if they express biased or uninformed opinions. Avoid directly challenging the patient’s perspective or providing counterarguments. Response should be less than 150 words.
 """
 
-# Function to edit the html and add a copy to clipboard function
-def read_html():
-    with open("index.html") as f:
-        return f.read().replace(
-            "copy_text", json.dumps(copy_text) # JSON dumps converts to safe text
-        )
-
-copy_text = ""
-
 # Create chat prompt template
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -92,6 +93,8 @@ for msg in msgs.messages:
     st.chat_message(msg.type).write(msg.content)
     copy_text += msg.type + ": " + msg.content + "\n"
 
+text = ""
+
 # User prompts the LLM
 if prompt := st.chat_input("Ask anything"):
     with st.chat_message("User"):
@@ -100,6 +103,11 @@ if prompt := st.chat_input("Ask anything"):
     config = {"configurable": {"session_id": "any"}}
     response = chain_with_history.invoke({"query": prompt}, config)
     st.chat_message("Assistant").write(response.content)
+    
+    text = "User: " + prompt + "\nAssistant: " + response.content + "\n"
+    st.session_state.copied.append(text)
+
+st.button("Copy to Clipboard 📋")
 
 # Only show copy to clipboard if user has prompted at least once
 if msgs.messages:
