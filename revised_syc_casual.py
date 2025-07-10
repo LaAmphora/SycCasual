@@ -109,10 +109,6 @@ if prompt := st.chat_input("Ask anything"):
 
 st.button("Copy to Clipboard 📋")
 
-# Only show copy to clipboard if user has prompted at least once
-if msgs.messages:
-    st.button("Copy to Clipboard 📋")
-
 # Acess the html for the streamlit GUI w/ IFrame
 components.html(
     read_html(),
