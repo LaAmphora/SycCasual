@@ -85,7 +85,7 @@ prompt = ChatPromptTemplate.from_messages(
 )
 
 # Define the model for the task
-gpt5_model = chat_models.ChatOpenAI(
+o4mini_model = chat_models.ChatOpenAI(
     model = "o4-mini-2025-04-16",
     openai_api_key = openai_api_key,
     temperature = 1
